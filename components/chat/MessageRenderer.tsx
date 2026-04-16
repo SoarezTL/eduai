@@ -214,6 +214,11 @@ export function MessageRenderer({ content }: { content: string }) {
     }
   }
 
+ // Convert ( ... ) and [ ... ] delimiters to $ and $$ for KaTeX
+  const processed = content
+    .replace(/\\\[/g, "$$$$").replace(/\\\]/g, "$$$$")
+    .replace(/\\\(/g, "$").replace(/\\\)/g, "$")
+
   return (
     <div className="prose-chat">
       <ReactMarkdown
@@ -221,8 +226,7 @@ export function MessageRenderer({ content }: { content: string }) {
         rehypePlugins={[rehypeKatex]}
         components={components}
       >
-        {content}
+        {processed}
       </ReactMarkdown>
     </div>
   )
-}
