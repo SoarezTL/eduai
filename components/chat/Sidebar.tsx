@@ -6,7 +6,7 @@ import { UserButton } from "@clerk/nextjs"
 import { Plus, Trash2, BarChart2 } from "lucide-react"
 import { useChat } from "@/hooks/useChat"
 import { getModeConfig, formatDate } from "@/lib/modes"
-import { ProgressDashboard } from "@/components/ProgressDashboard"
+import { ProgressDashboard } from "@/components/chat/ProgressDashboard"
 
 export function Sidebar() {
   const { sessions, activeSessionId, currentMode, setActiveSession, createSession, deleteSession } = useChat()
