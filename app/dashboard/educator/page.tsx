@@ -1,9 +1,11 @@
 "use client"
 
+export const dynamic = "force-dynamic"
+
 import { useState } from "react"
 import { useUser } from "@clerk/nextjs"
 import { BookOpen, FileText, Brain, ChevronRight } from "lucide-react"
-import { Sidebar }    from "@/components/chat/Sidebar"
+import { Sidebar } from "@/components/chat/Sidebar"
 import { ChatWindow } from "@/components/chat/ChatWindow"
 
 const TOOLS = [
@@ -17,7 +19,7 @@ export default function EducatorDashboard() {
   const [view, setView] = useState<"home" | "chat">("home")
 
   if (view === "chat") {
-    return ( 
+    return (
       <div className="flex h-screen overflow-hidden">
         <Sidebar />
         <main className="flex-1 overflow-hidden"><ChatWindow /></main>
@@ -30,14 +32,12 @@ export default function EducatorDashboard() {
       <Sidebar />
       <main className="flex-1 overflow-y-auto bg-gray-50 p-8">
         <div className="max-w-2xl mx-auto">
-
           <div className="mb-8">
             <h1 className="text-2xl font-bold text-gray-900">
               Welcome back, {user?.firstName ?? "Educator"} 👋
             </h1>
             <p className="text-gray-500 mt-1">What would you like to create today?</p>
           </div>
-
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
             {TOOLS.map(({ icon: Icon, label, desc, color }) => (
               <button
@@ -56,7 +56,6 @@ export default function EducatorDashboard() {
               </button>
             ))}
           </div>
-
           <div className="card p-6">
             <h2 className="font-semibold text-gray-900 mb-1">Open AI chat</h2>
             <p className="text-sm text-gray-500 mb-4">
@@ -66,7 +65,6 @@ export default function EducatorDashboard() {
               Start chatting
             </button>
           </div>
-
         </div>
       </main>
     </div>
