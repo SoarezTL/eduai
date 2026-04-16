@@ -1,6 +1,6 @@
 import { create } from "zustand"
 import { persist } from "zustand/middleware"
-import type { Message, Mode, Session } from "@/lib/types"
+import type { Message, Mode, Session, ProgressState } from "@/lib/types"
 import { generateId } from "@/lib/modes"
 
 interface ChatState {
@@ -8,6 +8,7 @@ interface ChatState {
   activeSessionId: string | null
   currentMode: Mode
   isStreaming: boolean
+  progress: ProgressState
   setMode: (mode: Mode) => void
   createSession: (mode: Mode) => string
   setActiveSession: (id: string) => void
@@ -17,6 +18,8 @@ interface ChatState {
   setStreaming: (v: boolean) => void
   clearSession: (sessionId: string) => void
   deleteSession: (sessionId: string) => void
+  addTopic: (topic: string, mode: Mode) => void
+  addQuizScore: (topic: string, score: number, total: number) => void
 }
 
 export const useChatStore = create<ChatState>()(
@@ -26,6 +29,7 @@ export const useChatStore = create<ChatState>()(
       activeSessionId: null,
       currentMode: "study",
       isStreaming: false,
+      progress: { topics: [], quizScores: [] },
 
       setMode: (mode) => set({ currentMode: mode }),
 
@@ -89,10 +93,34 @@ export const useChatStore = create<ChatState>()(
         sessions: s.sessions.filter((sess) => sess.id !== sessionId),
         activeSessionId: s.activeSessionId === sessionId ? null : s.activeSessionId,
       })),
+
+      addTopic: (topic, mode) => set((s) => ({
+        progress: {
+          ...s.progress,
+          topics: [
+            { topic, mode, studiedAt: new Date() },
+            ...s.progress.topics.filter(t => t.topic !== topic || t.mode !== mode),
+          ].slice(0, 50),
+        }
+      })),
+
+      addQuizScore: (topic, score, total) => set((s) => ({
+        progress: {
+          ...s.progress,
+          quizScores: [
+            { topic, score, total, date: new Date() },
+            ...s.progress.quizScores,
+          ].slice(0, 50),
+        }
+      })),
     }),
     {
       name: "eduai-chat",
-      partialize: (s) => ({ sessions: s.sessions.slice(0, 20), currentMode: s.currentMode }),
+      partialize: (s) => ({
+        sessions: s.sessions.slice(0, 20),
+        currentMode: s.currentMode,
+        progress: s.progress,
+      }),
     }
   )
 )
