@@ -66,12 +66,7 @@ function QuizQuestionCard({ q, index }: { q: QuizQuestion; index: number }) {
   const [selected, setSelected] = useState<string | null>(null)
   const [revealed, setRevealed] = useState(false)
 
-  const handleSelect = (opt: string) => {
-    if (!revealed) {
-      setSelected(opt)
-      setRevealed(true)
-    }
-  }
+  const isCorrect = selected === q.answer
 
   return (
     <div style={{ background: "white", borderRadius: 16, border: "1px solid #f0f0f0", overflow: "hidden", boxShadow: "0 1px 3px rgba(0,0,0,0.06)" }}>
@@ -98,7 +93,7 @@ function QuizQuestionCard({ q, index }: { q: QuizQuestion; index: number }) {
               bg = "#fff5f5"; border = "#dc0000"; color = "#dc0000"
             }
             return (
-              <button key={opt} onClick={() => handleSelect(opt)}
+              <button key={opt} onClick={() => { if (!revealed) setSelected(opt) }}
                 style={{ background: bg, border: `1.5px solid ${border}`, borderRadius: 10, padding: "9px 14px", textAlign: "left", cursor: revealed ? "default" : "pointer", color, fontSize: "0.875rem", fontWeight: isSelected ? 600 : 400, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8, transition: "all 0.15s" }}>
                 <span>{opt}</span>
                 {revealed && isAnswer && <CheckCircle size={16} />}
@@ -106,29 +101,42 @@ function QuizQuestionCard({ q, index }: { q: QuizQuestion; index: number }) {
               </button>
             )
           })}
+          {/* Submit button */}
+          {!revealed && (
+            <button
+              onClick={() => { if (selected) setRevealed(true) }}
+              disabled={!selected}
+              style={{ marginTop: 4, background: selected ? "#dc0000" : "#f3f4f6", color: selected ? "white" : "#9ca3af", border: "none", borderRadius: 10, padding: "10px 20px", fontWeight: 700, fontSize: "0.875rem", cursor: selected ? "pointer" : "not-allowed", transition: "all 0.15s" }}>
+              Submit Answer
+            </button>
+          )}
+          {/* Result after submit */}
+          {revealed && (
+            <div style={{ marginTop: 4, padding: "10px 14px", borderRadius: 10, background: isCorrect ? "#dcfce7" : "#fee2e2", color: isCorrect ? "#15803d" : "#dc2626", fontWeight: 600, fontSize: "0.875rem" }}>
+              {isCorrect ? "✅ Correct!" : "❌ Incorrect"} — 💡 {q.explanation}
+            </div>
+          )}
         </div>
       )}
 
       {(!q.options || q.options.length === 0) && (
-        <div style={{ padding: "12px 18px" }}>
+        <div style={{ padding: "12px 18px", display: "flex", flexDirection: "column", gap: 8 }}>
           <p style={{ margin: 0, fontSize: "0.875rem", color: "#6b7280" }}>
             <strong style={{ color: "#1a1a1a" }}>Answer:</strong> {revealed ? q.answer : "Click 'Show Answer' to reveal"}
           </p>
+          {!revealed && (
+            <button onClick={() => setRevealed(true)}
+              style={{ background: "#dc0000", color: "white", border: "none", borderRadius: 10, padding: "10px 20px", fontWeight: 700, fontSize: "0.875rem", cursor: "pointer" }}>
+              Show Answer
+            </button>
+          )}
+          {revealed && (
+            <div style={{ padding: "10px 14px", borderRadius: 10, background: "#f0fdf4", color: "#15803d", fontWeight: 600, fontSize: "0.875rem" }}>
+              💡 {q.explanation}
+            </div>
+          )}
         </div>
       )}
-
-      <div style={{ padding: "10px 18px", borderTop: "1px solid #f5f5f5", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
-        <button onClick={() => setRevealed(!revealed)}
-          style={{ background: "none", border: "none", cursor: "pointer", fontSize: "0.8rem", fontWeight: 600, color: "#dc0000", padding: 0, display: "flex", alignItems: "center", gap: 4 }}>
-          {revealed ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-          {revealed ? "Hide" : "Show"} Answer
-        </button>
-        {revealed && (
-          <p style={{ margin: 0, fontSize: "0.8rem", color: "#6b7280", flex: 1, textAlign: "right", lineHeight: 1.4 }}>
-            💡 {q.explanation}
-          </p>
-        )}
-      </div>
     </div>
   )
 }
