@@ -7,7 +7,7 @@ import type { Mode } from "@/lib/types"
 export function useChat() {
   const store = useChatStore()
 
-  const sendMessage = useCallback(async (content: string, mode?: Mode) => {
+  const sendMessage = useCallback(async (content: string, image?: string, model?: string, mode?: Mode) => {
     const targetMode = mode ?? store.currentMode
     let sessionId = store.activeSessionId
 
@@ -28,12 +28,12 @@ export function useChat() {
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages, mode: targetMode }),
+        body: JSON.stringify({ messages, mode: targetMode, image, model }),
       })
 
       if (!res.ok || !res.body) throw new Error("Stream failed")
 
-      const reader  = res.body.getReader()
+      const reader = res.body.getReader()
       const decoder = new TextDecoder()
       let accumulated = ""
 
