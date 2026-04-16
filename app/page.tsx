@@ -1,7 +1,7 @@
 import Link from "next/link"
 import { ArrowRight, Mail, Github, Linkedin, Instagram, Brain, Calculator, Code2, FileText, BookOpen, Search } from "lucide-react"
 
-export default function HomePage() {
+export default function HomePage() { 
   return (
     <main style={{fontFamily:"system-ui,sans-serif",background:"#fff",color:"#1a1a1a"}}>
 
