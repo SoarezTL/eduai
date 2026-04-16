@@ -61,16 +61,32 @@ export function ChatInput({
     e.target.value = ""
   }
 
+  const getFileIcon = (name: string) => {
+    if (name.match(/\.(jpg|jpeg|png|gif|webp)$/i)) return null
+    if (name.endsWith(".pdf")) return "📄"
+    if (name.endsWith(".doc") || name.endsWith(".docx")) return "📝"
+    if (name.endsWith(".txt")) return "📃"
+    return "📎"
+  }
+
+  const isImageFile = (name: string) => name.match(/\.(jpg|jpeg|png|gif|webp)$/i)
+
   const selectedModel = MODELS.find(m => m.id === model) ?? MODELS[0]
 
   return (
     <div style={{ borderTop: "3px solid #ffc700", background: "white", padding: "12px 16px" }}>
       <div style={{ maxWidth: 760, margin: "0 auto" }}>
 
-        {/* Image preview */}
+        {/* File preview */}
         {image && (
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8, background: "#f9fafb", borderRadius: 10, padding: "8px 12px", border: "1px solid #e5e7eb" }}>
-            <img src={image} alt="upload" style={{ width: 40, height: 40, objectFit: "cover", borderRadius: 6 }} />
+            {isImageFile(imageName) ? (
+              <img src={image} alt="upload" style={{ width: 40, height: 40, objectFit: "cover", borderRadius: 6 }} />
+            ) : (
+              <div style={{ width: 40, height: 40, background: "#fee2e2", borderRadius: 6, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20 }}>
+                {getFileIcon(imageName)}
+              </div>
+            )}
             <span style={{ fontSize: 12, color: "#374151", flex: 1 }}>{imageName}</span>
             <button onClick={() => { setImage(null); setImageName("") }}
               style={{ background: "none", border: "none", cursor: "pointer", color: "#9ca3af" }}>
@@ -84,10 +100,16 @@ export function ChatInput({
           {/* Attach button */}
           <button onClick={() => fileRef.current?.click()}
             style={{ background: "none", border: "none", cursor: "pointer", color: "#9ca3af", padding: 4, flexShrink: 0, display: "flex", alignItems: "center" }}
-            title="Attach image">
+            title="Attach file">
             <Paperclip size={16} />
           </button>
-          <input ref={fileRef} type="file" accept="image/*" onChange={handleFile} style={{ display: "none" }} />
+          <input
+            ref={fileRef}
+            type="file"
+            accept="image/*,.pdf,.doc,.docx,.txt"
+            onChange={handleFile}
+            style={{ display: "none" }}
+          />
 
           <textarea
             ref={ref}
