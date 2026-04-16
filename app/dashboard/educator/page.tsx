@@ -17,7 +17,7 @@ export default function EducatorDashboard() {
   const [view, setView] = useState<"home" | "chat">("home")
 
   if (view === "chat") {
-    return (
+    return ( 
       <div className="flex h-screen overflow-hidden">
         <Sidebar />
         <main className="flex-1 overflow-hidden"><ChatWindow /></main>
