@@ -11,19 +11,38 @@ export async function POST(req: NextRequest) {
   const cfg = getModeConfig(mode)
   const selectedModel = model ?? "google/gemini-2.0-flash-001"
 
-  // Build the last user message with optional image
+  // Build the last user message with optional file/image
   const lastMessage = messages[messages.length - 1]
-  const messagesWithImage = [
-    ...messages.slice(0, -1),
-    image && lastMessage?.role === "user"
-      ? {
+
+  let processedLastMessage = lastMessage
+  if (image && lastMessage?.role === "user") {
+    if (image.startsWith("data:image")) {
+      // It's an image — send as vision message
+      processedLastMessage = {
+        role: "user",
+        content: [
+          { type: "image_url", image_url: { url: image } },
+          { type: "text", text: lastMessage.content },
+        ],
+      }
+    } else {
+      // It's a PDF/text/doc — extract text from base64 and append to message
+      try {
+        const base64Data = image.split(",")[1]
+        const fileText = Buffer.from(base64Data, "base64").toString("utf-8")
+        processedLastMessage = {
           role: "user",
-          content: [
-            { type: "image_url", image_url: { url: image } },
-            { type: "text", text: lastMessage.content },
-          ],
+          content: `${lastMessage.content}\n\n[Attached file content]:\n${fileText}`,
         }
-      : lastMessage,
+      } catch {
+        processedLastMessage = lastMessage
+      }
+    }
+  }
+
+  const messagesWithFile = [
+    ...messages.slice(0, -1),
+    processedLastMessage,
   ]
 
   const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
@@ -39,7 +58,7 @@ export async function POST(req: NextRequest) {
       stream: true,
       messages: [
         { role: "system", content: cfg.systemPrompt },
-        ...messagesWithImage,
+        ...messagesWithFile,
       ],
     }),
   })
