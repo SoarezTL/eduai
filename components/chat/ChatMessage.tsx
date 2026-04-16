@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { CheckCircle, XCircle, ChevronDown, ChevronUp, Target, BookOpen, Layers, ClipboardList, Package } from "lucide-react"
+import { CheckCircle, XCircle, Target, BookOpen, Layers, ClipboardList, Package } from "lucide-react"
 import { formatDate } from "@/lib/modes"
 import type { Message } from "@/lib/types"
 
@@ -62,88 +62,23 @@ function DifficultyBadge({ level }: { level: string }) {
   )
 }
 
-function QuizQuestionCard({ q, index }: { q: QuizQuestion; index: number }) {
-  const [selected, setSelected] = useState<string | null>(null)
-  const [revealed, setRevealed] = useState(false)
-
-  const isCorrect = selected === q.answer
-
-  return (
-    <div style={{ background: "white", borderRadius: 16, border: "1px solid #f0f0f0", overflow: "hidden", boxShadow: "0 1px 3px rgba(0,0,0,0.06)" }}>
-      <div style={{ padding: "14px 18px", borderBottom: "1px solid #f5f5f5", display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12 }}>
-        <div style={{ display: "flex", alignItems: "flex-start", gap: 10, flex: 1 }}>
-          <span style={{ width: 26, height: 26, borderRadius: 8, background: "#dc000015", color: "#dc0000", fontWeight: 800, fontSize: "0.8rem", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, marginTop: 1 }}>
-            {index + 1}
-          </span>
-          <p style={{ margin: 0, fontWeight: 600, color: "#1a1a1a", fontSize: "0.9rem", lineHeight: 1.5 }}>{q.question}</p>
-        </div>
-        <DifficultyBadge level={q.difficulty} />
-      </div>
-
-      {q.options && q.options.length > 0 && (
-        <div style={{ padding: "12px 18px", display: "flex", flexDirection: "column", gap: 8 }}>
-          {q.options.map((opt) => {
-            const isSelected = selected === opt
-            const isAnswer = opt === q.answer
-            let bg = "white", border = "#e5e7eb", color = "#374151"
-            if (revealed) {
-              if (isAnswer) { bg = "#dcfce7"; border = "#16a34a"; color = "#15803d" }
-              else if (isSelected) { bg = "#fee2e2"; border = "#dc2626"; color = "#dc2626" }
-            } else if (isSelected) {
-              bg = "#fff5f5"; border = "#dc0000"; color = "#dc0000"
-            }
-            return (
-              <button key={opt} onClick={() => { if (!revealed) setSelected(opt) }}
-                style={{ background: bg, border: `1.5px solid ${border}`, borderRadius: 10, padding: "9px 14px", textAlign: "left", cursor: revealed ? "default" : "pointer", color, fontSize: "0.875rem", fontWeight: isSelected ? 600 : 400, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8, transition: "all 0.15s" }}>
-                <span>{opt}</span>
-                {revealed && isAnswer && <CheckCircle size={16} />}
-                {revealed && isSelected && !isAnswer && <XCircle size={16} />}
-              </button>
-            )
-          })}
-          {/* Submit button */}
-          {!revealed && (
-            <button
-              onClick={() => { if (selected) setRevealed(true) }}
-              disabled={!selected}
-              style={{ marginTop: 4, background: selected ? "#dc0000" : "#f3f4f6", color: selected ? "white" : "#9ca3af", border: "none", borderRadius: 10, padding: "10px 20px", fontWeight: 700, fontSize: "0.875rem", cursor: selected ? "pointer" : "not-allowed", transition: "all 0.15s" }}>
-              Submit Answer
-            </button>
-          )}
-          {/* Result after submit */}
-          {revealed && (
-            <div style={{ marginTop: 4, padding: "10px 14px", borderRadius: 10, background: isCorrect ? "#dcfce7" : "#fee2e2", color: isCorrect ? "#15803d" : "#dc2626", fontWeight: 600, fontSize: "0.875rem" }}>
-              {isCorrect ? "✅ Correct!" : "❌ Incorrect"} — 💡 {q.explanation}
-            </div>
-          )}
-        </div>
-      )}
-
-      {(!q.options || q.options.length === 0) && (
-        <div style={{ padding: "12px 18px", display: "flex", flexDirection: "column", gap: 8 }}>
-          <p style={{ margin: 0, fontSize: "0.875rem", color: "#6b7280" }}>
-            <strong style={{ color: "#1a1a1a" }}>Answer:</strong> {revealed ? q.answer : "Click 'Show Answer' to reveal"}
-          </p>
-          {!revealed && (
-            <button onClick={() => setRevealed(true)}
-              style={{ background: "#dc0000", color: "white", border: "none", borderRadius: 10, padding: "10px 20px", fontWeight: 700, fontSize: "0.875rem", cursor: "pointer" }}>
-              Show Answer
-            </button>
-          )}
-          {revealed && (
-            <div style={{ padding: "10px 14px", borderRadius: 10, background: "#f0fdf4", color: "#15803d", fontWeight: 600, fontSize: "0.875rem" }}>
-              💡 {q.explanation}
-            </div>
-          )}
-        </div>
-      )}
-    </div>
-  )
-}
-
 function QuizRenderer({ data }: { data: QuizData }) {
+  const [answers, setAnswers] = useState<Record<string, string>>({})
+  const [submitted, setSubmitted] = useState(false)
+
+  const setAnswer = (id: string, val: string) => {
+    if (!submitted) setAnswers(prev => ({ ...prev, [id]: val }))
+  }
+
+  const score = submitted
+    ? data.questions.filter(q => (answers[q.id] ?? "").trim().toLowerCase() === q.answer.trim().toLowerCase()).length
+    : 0
+
+  const allAnswered = data.questions.every(q => (answers[q.id] ?? "").trim() !== "")
+
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+      {/* header */}
       <div style={{ background: "linear-gradient(135deg,#dc0000,#ff4444)", borderRadius: 16, padding: "18px 20px", color: "white" }}>
         <p style={{ margin: "0 0 4px", fontSize: "0.75rem", fontWeight: 600, opacity: 0.8, textTransform: "uppercase", letterSpacing: "0.05em" }}>Quiz</p>
         <h3 style={{ margin: "0 0 6px", fontWeight: 800, fontSize: "1.1rem" }}>{data.title}</h3>
@@ -151,10 +86,87 @@ function QuizRenderer({ data }: { data: QuizData }) {
           <span>📚 {data.topic}</span>
           <span>❓ {data.questions.length} questions</span>
         </div>
+        {submitted && (
+          <div style={{ marginTop: 10, background: "rgba(255,255,255,0.2)", borderRadius: 10, padding: "8px 14px", fontWeight: 700, fontSize: "0.95rem" }}>
+            🎯 Score: {score}/{data.questions.length} — {Math.round((score / data.questions.length) * 100)}%
+          </div>
+        )}
       </div>
-      {data.questions.map((q, i) => (
-        <QuizQuestionCard key={q.id ?? i} q={q} index={i} />
-      ))}
+
+      {/* questions */}
+      {data.questions.map((q, i) => {
+        const userAnswer = answers[q.id] ?? ""
+        const isCorrect = submitted && userAnswer.trim().toLowerCase() === q.answer.trim().toLowerCase()
+        const isTyped = q.type === "short_answer" || q.type === "fill_blank"
+
+        return (
+          <div key={q.id ?? i} style={{ background: "white", borderRadius: 16, border: `1px solid ${submitted ? (isCorrect ? "#16a34a" : "#dc2626") : "#f0f0f0"}`, overflow: "hidden", boxShadow: "0 1px 3px rgba(0,0,0,0.06)" }}>
+            {/* question header */}
+            <div style={{ padding: "14px 18px", borderBottom: "1px solid #f5f5f5", display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12 }}>
+              <div style={{ display: "flex", alignItems: "flex-start", gap: 10, flex: 1 }}>
+                <span style={{ width: 26, height: 26, borderRadius: 8, background: "#dc000015", color: "#dc0000", fontWeight: 800, fontSize: "0.8rem", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, marginTop: 1 }}>
+                  {i + 1}
+                </span>
+                <p style={{ margin: 0, fontWeight: 600, color: "#1a1a1a", fontSize: "0.9rem", lineHeight: 1.5 }}>{q.question}</p>
+              </div>
+              <DifficultyBadge level={q.difficulty} />
+            </div>
+
+            <div style={{ padding: "12px 18px", display: "flex", flexDirection: "column", gap: 8 }}>
+              {/* MCQ / true_false */}
+              {q.options && q.options.map((opt) => {
+                const isSelected = userAnswer === opt
+                const isAnswer = opt === q.answer
+                let bg = "white", border = "#e5e7eb", color = "#374151"
+                if (submitted) {
+                  if (isAnswer) { bg = "#dcfce7"; border = "#16a34a"; color = "#15803d" }
+                  else if (isSelected) { bg = "#fee2e2"; border = "#dc2626"; color = "#dc2626" }
+                } else if (isSelected) {
+                  bg = "#fff5f5"; border = "#dc0000"; color = "#dc0000"
+                }
+                return (
+                  <button key={opt} onClick={() => setAnswer(q.id, opt)}
+                    style={{ background: bg, border: `1.5px solid ${border}`, borderRadius: 10, padding: "9px 14px", textAlign: "left", cursor: submitted ? "default" : "pointer", color, fontSize: "0.875rem", fontWeight: isSelected ? 600 : 400, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8, transition: "all 0.15s" }}>
+                    <span>{opt}</span>
+                    {submitted && isAnswer && <CheckCircle size={16} />}
+                    {submitted && isSelected && !isAnswer && <XCircle size={16} />}
+                  </button>
+                )
+              })}
+
+              {/* short_answer / fill_blank */}
+              {isTyped && (
+                <input
+                  type="text"
+                  value={userAnswer}
+                  onChange={(e) => setAnswer(q.id, e.target.value)}
+                  placeholder={q.type === "fill_blank" ? "Type your answer..." : "Write your answer..."}
+                  disabled={submitted}
+                  style={{ width: "100%", padding: "10px 14px", borderRadius: 10, border: `1.5px solid ${submitted ? (isCorrect ? "#16a34a" : "#dc2626") : "#e5e7eb"}`, fontSize: "0.875rem", color: "#1a1a1a", background: submitted ? (isCorrect ? "#dcfce7" : "#fee2e2") : "white", outline: "none", transition: "all 0.15s" }}
+                />
+              )}
+
+              {/* result after submit */}
+              {submitted && (
+                <div style={{ padding: "10px 14px", borderRadius: 10, background: isCorrect ? "#dcfce7" : "#fee2e2", color: isCorrect ? "#15803d" : "#dc2626", fontSize: "0.875rem" }}>
+                  <span style={{ fontWeight: 700 }}>{isCorrect ? "✅ Correct!" : `❌ Wrong — Answer: ${q.answer}`}</span>
+                  <p style={{ margin: "4px 0 0", fontWeight: 400, fontSize: "0.8rem" }}>💡 {q.explanation}</p>
+                </div>
+              )}
+            </div>
+          </div>
+        )
+      })}
+
+      {/* single submit button */}
+      {!submitted && (
+        <button
+          onClick={() => setSubmitted(true)}
+          disabled={!allAnswered}
+          style={{ background: allAnswered ? "#dc0000" : "#f3f4f6", color: allAnswered ? "white" : "#9ca3af", border: "none", borderRadius: 12, padding: "14px 20px", fontWeight: 700, fontSize: "1rem", cursor: allAnswered ? "pointer" : "not-allowed", transition: "all 0.15s" }}>
+          {allAnswered ? "Submit Quiz" : `Answer all questions to submit (${Object.keys(answers).length}/${data.questions.length})`}
+        </button>
+      )}
     </div>
   )
 }
