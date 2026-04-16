@@ -65,6 +65,14 @@ function DifficultyBadge({ level }: { level: string }) {
 function QuizQuestionCard({ q, index }: { q: QuizQuestion; index: number }) {
   const [selected, setSelected] = useState<string | null>(null)
   const [revealed, setRevealed] = useState(false)
+
+  const handleSelect = (opt: string) => {
+    if (!revealed) {
+      setSelected(opt)
+      setRevealed(true)
+    }
+  }
+
   return (
     <div style={{ background: "white", borderRadius: 16, border: "1px solid #f0f0f0", overflow: "hidden", boxShadow: "0 1px 3px rgba(0,0,0,0.06)" }}>
       <div style={{ padding: "14px 18px", borderBottom: "1px solid #f5f5f5", display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12 }}>
@@ -76,6 +84,7 @@ function QuizQuestionCard({ q, index }: { q: QuizQuestion; index: number }) {
         </div>
         <DifficultyBadge level={q.difficulty} />
       </div>
+
       {q.options && q.options.length > 0 && (
         <div style={{ padding: "12px 18px", display: "flex", flexDirection: "column", gap: 8 }}>
           {q.options.map((opt) => {
@@ -89,7 +98,7 @@ function QuizQuestionCard({ q, index }: { q: QuizQuestion; index: number }) {
               bg = "#fff5f5"; border = "#dc0000"; color = "#dc0000"
             }
             return (
-              <button key={opt} onClick={() => { if (!revealed) setSelected(opt) }}
+              <button key={opt} onClick={() => handleSelect(opt)}
                 style={{ background: bg, border: `1.5px solid ${border}`, borderRadius: 10, padding: "9px 14px", textAlign: "left", cursor: revealed ? "default" : "pointer", color, fontSize: "0.875rem", fontWeight: isSelected ? 600 : 400, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8, transition: "all 0.15s" }}>
                 <span>{opt}</span>
                 {revealed && isAnswer && <CheckCircle size={16} />}
@@ -99,6 +108,7 @@ function QuizQuestionCard({ q, index }: { q: QuizQuestion; index: number }) {
           })}
         </div>
       )}
+
       {(!q.options || q.options.length === 0) && (
         <div style={{ padding: "12px 18px" }}>
           <p style={{ margin: 0, fontSize: "0.875rem", color: "#6b7280" }}>
@@ -106,6 +116,7 @@ function QuizQuestionCard({ q, index }: { q: QuizQuestion; index: number }) {
           </p>
         </div>
       )}
+
       <div style={{ padding: "10px 18px", borderTop: "1px solid #f5f5f5", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
         <button onClick={() => setRevealed(!revealed)}
           style={{ background: "none", border: "none", cursor: "pointer", fontSize: "0.8rem", fontWeight: 600, color: "#dc0000", padding: 0, display: "flex", alignItems: "center", gap: 4 }}>
