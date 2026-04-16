@@ -18,3 +18,14 @@ export interface Session {
   createdAt: Date
   updatedAt: Date
 }
+
+export interface TopicEntry {
+  topic: string
+  mode: Mode
+  studiedAt: Date
+}
+
+export interface ProgressState {
+  topics: TopicEntry[]
+  quizScores: { topic: string; score: number; total: number; date: Date }[]
+}
