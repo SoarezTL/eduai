@@ -230,3 +230,4 @@ export function MessageRenderer({ content }: { content: string }) {
       </ReactMarkdown>
     </div>
   )
+}
