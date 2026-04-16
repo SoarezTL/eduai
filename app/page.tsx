@@ -20,7 +20,7 @@ export default function HomePage() {
               <a key={item} href={`#${item.toLowerCase()}`} style={{color:"#444",textDecoration:"none",padding:"6px 12px",borderRadius:8,fontSize:14,fontWeight:500}}>{item}</a>
             ))}
             <Link href="/auth/login" style={{color:"#dc0000",textDecoration:"none",padding:"6px 14px",borderRadius:8,fontSize:14,fontWeight:700}}>Sign in</Link>
-            <Link href="/auth/signup" style={{background:"#dc0000",color:"white",textDecoration:"none",padding:"8px 18px",borderRadius:10,fontSize:14,fontWeight:700}}>Get Started</Link>
+            <Link href="/dashboard" style={{background:"#dc0000",color:"white",textDecoration:"none",padding:"8px 18px",borderRadius:10,fontSize:14,fontWeight:700}}>Get Started</Link>
           </div>
         </div>
       </nav>
@@ -55,7 +55,7 @@ export default function HomePage() {
             Our mission: <strong style={{color:"#dc0000"}}>Make quality education accessible for all 🇹🇱</strong>
           </p>
           <div style={{display:"flex",gap:12,justifyContent:"center",flexWrap:"wrap"}}>
-            <Link href="/auth/signup" style={{display:"inline-flex",alignItems:"center",gap:8,background:"#dc0000",color:"white",textDecoration:"none",padding:"14px 32px",borderRadius:14,fontSize:16,fontWeight:700}}>
+            <Link href="/dashboard" style={{display:"inline-flex",alignItems:"center",gap:8,background:"#dc0000",color:"white",textDecoration:"none",padding:"14px 32px",borderRadius:14,fontSize:16,fontWeight:700}}>
               Get Started Free <ArrowRight size={18} />
             </Link>
             <Link href="/auth/login" style={{display:"inline-flex",alignItems:"center",gap:8,background:"white",color:"#dc0000",textDecoration:"none",padding:"14px 32px",borderRadius:14,fontSize:16,fontWeight:700,border:"2px solid #dc0000"}}>
@@ -108,7 +108,7 @@ export default function HomePage() {
             ))}
           </div>
           <div style={{textAlign:"center",marginTop:40}}>
-            <Link href="/auth/signup" style={{display:"inline-flex",alignItems:"center",gap:8,background:"#dc0000",color:"white",textDecoration:"none",padding:"14px 36px",borderRadius:14,fontSize:16,fontWeight:700}}>
+            <Link href="/dashboard" style={{display:"inline-flex",alignItems:"center",gap:8,background:"#dc0000",color:"white",textDecoration:"none",padding:"14px 36px",borderRadius:14,fontSize:16,fontWeight:700}}>
               Start Learning Free <ArrowRight size={18} />
             </Link>
           </div>
@@ -131,7 +131,7 @@ export default function HomePage() {
                 <div style={{width:52,height:52,background:`${color}15`,borderRadius:14,display:"flex",alignItems:"center",justifyContent:"center",fontSize:24,marginBottom:14}}>{icon}</div>
                 <h3 style={{fontWeight:700,marginBottom:12,color}}>{title}</h3>
                 {items.map(item => (
-                  <a key={item} href="/auth/signup" style={{display:"block",color,fontSize:"0.875rem",textDecoration:"none",marginBottom:6,fontWeight:500}}>{item} →</a>
+                  <a key={item} href="/dashboard" style={{display:"block",color,fontSize:"0.875rem",textDecoration:"none",marginBottom:6,fontWeight:500}}>{item} →</a>
                 ))}
               </div>
             ))}
@@ -191,7 +191,7 @@ export default function HomePage() {
               </a>
             ))}
           </div>
-          <Link href="/auth/signup" style={{display:"inline-flex",alignItems:"center",gap:8,background:"#dc0000",color:"white",textDecoration:"none",padding:"14px 36px",borderRadius:14,fontSize:16,fontWeight:700}}>
+          <Link href="/dashboard" style={{display:"inline-flex",alignItems:"center",gap:8,background:"#dc0000",color:"white",textDecoration:"none",padding:"14px 36px",borderRadius:14,fontSize:16,fontWeight:700}}>
             Start Using EduAI Free <ArrowRight size={18} />
           </Link>
         </div>
@@ -227,9 +227,8 @@ export default function HomePage() {
             ))}
           </div>
         </div>
-        <div style={{maxWidth:1100,margin:"24px auto 0",borderTop:"1px solid #333",paddingTop:20,display:"flex",justifyContent:"space-between",flexWrap:"wrap",gap:8}}>
-          <p style={{color:"#666",fontSize:"0.8rem"}}>© {new Date().getFullYear()} EduAI by Osorio Soarez. All rights reserved.</p>
-          <p style={{color:"#666",fontSize:"0.8rem"}}>Built with Next.js + AI · Dili, Timor-Leste 🇹🇱</p>
+        <div style={{maxWidth:1100,margin:"24px auto 0",borderTop:"1px solid #333",paddingTop:20}}>
+          <p style={{color:"#666",fontSize:"0.8rem",textAlign:"center"}}>© {new Date().getFullYear()} EduAI by Osorio Soarez. All rights reserved.</p>
         </div>
       </footer>
 
