@@ -1,13 +1,16 @@
 "use client"
 
+import { useState } from "react"
 import Link from "next/link"
 import { UserButton } from "@clerk/nextjs"
-import { Plus, Trash2 } from "lucide-react"
+import { Plus, Trash2, BarChart2 } from "lucide-react"
 import { useChat } from "@/hooks/useChat"
 import { getModeConfig, formatDate } from "@/lib/modes"
+import { ProgressDashboard } from "@/components/ProgressDashboard"
 
 export function Sidebar() {
   const { sessions, activeSessionId, currentMode, setActiveSession, createSession, deleteSession } = useChat()
+  const [showProgress, setShowProgress] = useState(false)
 
   return (
     <aside style={{width:240,background:"#1a1a1a",display:"flex",flexDirection:"column",height:"100%",flexShrink:0}}>
@@ -22,9 +25,15 @@ export function Sidebar() {
         </Link>
         <button
           onClick={() => createSession(currentMode)}
-          style={{width:"100%",background:"#dc0000",color:"white",border:"none",borderRadius:10,padding:"8px 12px",fontSize:13,fontWeight:600,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:6}}
+          style={{width:"100%",background:"#dc0000",color:"white",border:"none",borderRadius:10,padding:"8px 12px",fontSize:13,fontWeight:600,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:6,marginBottom:8}}
         >
           <Plus size={14} /> New chat
+        </button>
+        <button
+          onClick={() => setShowProgress(true)}
+          style={{width:"100%",background:"#2a2a2a",color:"#ccc",border:"1px solid #333",borderRadius:10,padding:"8px 12px",fontSize:13,fontWeight:600,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:6}}
+        >
+          <BarChart2 size={14} /> My Progress
         </button>
       </div>
 
@@ -81,6 +90,8 @@ export function Sidebar() {
           <span style={{fontSize:11,color:"#666"}}>Timor-Leste 🇹🇱</span>
         </div>
       </div>
+
+      {showProgress && <ProgressDashboard onClose={() => setShowProgress(false)} />}
     </aside>
   )
 }
