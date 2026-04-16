@@ -6,7 +6,6 @@ import remarkMath from "remark-math"
 import rehypeKatex from "rehype-katex"
 import type { Components } from "react-markdown"
 
-// ── Markdown components ──────────────────────────────────────────────────────
 const components: Components = {
   code({ className, children }) {
     const isBlock = className?.includes("language-")
@@ -49,16 +48,25 @@ const components: Components = {
   },
 }
 
-// ── Quiz renderer ────────────────────────────────────────────────────────────
 function QuizRenderer({ data }: { data: any }) {
   const [answers, setAnswers] = useState<Record<string, string>>({})
   const [submitted, setSubmitted] = useState(false)
   const [score, setScore] = useState(0)
 
+  const checkAnswer = (q: any, userAnswer: string) => {
+    if (q.type === "fill_blank" || q.type === "short_answer") {
+      return userAnswer?.toLowerCase().trim() === q.answer?.toLowerCase().trim()
+    }
+    if (q.type === "true_false") {
+      return userAnswer?.toLowerCase() === q.answer?.toLowerCase()
+    }
+    return userAnswer === q.answer
+  }
+
   const handleSubmit = () => {
     let correct = 0
     data.questions.forEach((q: any) => {
-      if (answers[q.id] === q.answer) correct++
+      if (checkAnswer(q, answers[q.id])) correct++
     })
     setScore(correct)
     setSubmitted(true)
@@ -88,36 +96,69 @@ function QuizRenderer({ data }: { data: any }) {
 
       {data.questions.map((q: any, i: number) => {
         const selected = answers[q.id]
-        const isCorrect = selected === q.answer
+        const isCorrect = checkAnswer(q, selected)
         return (
           <div key={q.id} style={{ background: submitted ? (isCorrect ? "#f0fdf4" : "#fff1f2") : "#f9fafb", borderRadius: 10, padding: "12px 14px", marginBottom: 12, border: `1px solid ${submitted ? (isCorrect ? "#86efac" : "#fca5a5") : "#e5e7eb"}` }}>
             <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 8, color: "#1a1a1a" }}>
               Q{i + 1}. {q.question}
               <span style={{ fontSize: 11, fontWeight: 400, color: "#888", marginLeft: 8 }}>[{q.difficulty}]</span>
             </div>
+
             <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-              {q.options.map((opt: string) => {
-                const letter = opt[0]
-                const isSelected = selected === letter
-                const isAnswer = q.answer === letter
-                let bg = "white"
-                let border = "#e5e7eb"
-                let color = "#374151"
-                if (submitted) {
-                  if (isAnswer) { bg = "#dcfce7"; border = "#86efac"; color = "#166534" }
-                  else if (isSelected && !isAnswer) { bg = "#fee2e2"; border = "#fca5a5"; color = "#991b1b" }
-                } else if (isSelected) {
-                  bg = "#fff1f2"; border = "#dc0000"; color = "#dc0000"
-                }
-                return (
-                  <button key={opt} disabled={submitted}
-                    onClick={() => setAnswers(prev => ({ ...prev, [q.id]: letter }))}
-                    style={{ background: bg, border: `1px solid ${border}`, borderRadius: 8, padding: "8px 12px", fontSize: 13, color, textAlign: "left", cursor: submitted ? "default" : "pointer", transition: "all 0.15s" }}>
-                    {opt}
-                  </button>
-                )
-              })}
+              {q.type === "fill_blank" || q.type === "short_answer" ? (
+                <div>
+                  <input
+                    type="text"
+                    disabled={submitted}
+                    placeholder="Type your answer..."
+                    value={answers[q.id] ?? ""}
+                    onChange={(e) => setAnswers(prev => ({ ...prev, [q.id]: e.target.value }))}
+                    style={{ width: "100%", border: `1px solid ${submitted ? (isCorrect ? "#86efac" : "#fca5a5") : "#e5e7eb"}`, borderRadius: 8, padding: "8px 12px", fontSize: 13, outline: "none", background: submitted ? (isCorrect ? "#dcfce7" : "#fee2e2") : "white", boxSizing: "border-box" }}
+                  />
+                  {submitted && (
+                    <div style={{ fontSize: 12, color: "#555", marginTop: 4 }}>
+                      Correct answer: <strong>{q.answer}</strong>
+                    </div>
+                  )}
+                </div>
+              ) : q.type === "true_false" ? (
+                ["True", "False"].map((opt) => {
+                  const isSelected = answers[q.id] === opt
+                  const isAnswer = q.answer?.toLowerCase() === opt.toLowerCase()
+                  let bg = "white", border = "#e5e7eb", color = "#374151"
+                  if (submitted) {
+                    if (isAnswer) { bg = "#dcfce7"; border = "#86efac"; color = "#166534" }
+                    else if (isSelected && !isAnswer) { bg = "#fee2e2"; border = "#fca5a5"; color = "#991b1b" }
+                  } else if (isSelected) { bg = "#fff1f2"; border = "#dc0000"; color = "#dc0000" }
+                  return (
+                    <button key={opt} disabled={submitted}
+                      onClick={() => setAnswers(prev => ({ ...prev, [q.id]: opt }))}
+                      style={{ background: bg, border: `1px solid ${border}`, borderRadius: 8, padding: "8px 12px", fontSize: 13, color, textAlign: "left", cursor: submitted ? "default" : "pointer" }}>
+                      {opt}
+                    </button>
+                  )
+                })
+              ) : (
+                q.options?.map((opt: string) => {
+                  const letter = opt[0]
+                  const isSelected = selected === letter
+                  const isAnswer = q.answer === letter
+                  let bg = "white", border = "#e5e7eb", color = "#374151"
+                  if (submitted) {
+                    if (isAnswer) { bg = "#dcfce7"; border = "#86efac"; color = "#166534" }
+                    else if (isSelected && !isAnswer) { bg = "#fee2e2"; border = "#fca5a5"; color = "#991b1b" }
+                  } else if (isSelected) { bg = "#fff1f2"; border = "#dc0000"; color = "#dc0000" }
+                  return (
+                    <button key={opt} disabled={submitted}
+                      onClick={() => setAnswers(prev => ({ ...prev, [q.id]: letter }))}
+                      style={{ background: bg, border: `1px solid ${border}`, borderRadius: 8, padding: "8px 12px", fontSize: 13, color, textAlign: "left", cursor: submitted ? "default" : "pointer", transition: "all 0.15s" }}>
+                      {opt}
+                    </button>
+                  )
+                })
+              )}
             </div>
+
             {submitted && (
               <div style={{ marginTop: 8, fontSize: 12, color: "#555", background: "#f3f4f6", borderRadius: 6, padding: "6px 10px" }}>
                 💡 {q.explanation}
@@ -147,7 +188,6 @@ function QuizRenderer({ data }: { data: any }) {
   )
 }
 
-// ── Lesson renderer ──────────────────────────────────────────────────────────
 function LessonRenderer({ data }: { data: any }) {
   return (
     <div style={{ fontFamily: "sans-serif" }}>
@@ -196,9 +236,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
   )
 }
 
-// ── Main renderer ────────────────────────────────────────────────────────────
 export function MessageRenderer({ content }: { content: string }) {
-  // Try to detect and parse JSON
   const trimmed = content.trim()
   if (trimmed.startsWith("{")) {
     try {
@@ -214,7 +252,6 @@ export function MessageRenderer({ content }: { content: string }) {
     }
   }
 
- // Convert ( ... ) and [ ... ] delimiters to $ and $$ for KaTeX
   const processed = content
     .replace(/\\\[/g, "$$$$").replace(/\\\]/g, "$$$$")
     .replace(/\\\(/g, "$").replace(/\\\)/g, "$")
