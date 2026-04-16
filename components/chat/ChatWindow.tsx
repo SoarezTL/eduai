@@ -49,7 +49,7 @@ export function ChatWindow() {
       {/* messages */}
       <div style={{flex:1,overflowY:"auto"}}>
         {messages.length === 0
-          ? <WelcomeScreen mode={currentMode} onSuggestion={t => sendMessage(t, currentMode)} />
+          ? <WelcomeScreen mode={currentMode} onSuggestion={t => sendMessage(t, undefined, undefined, currentMode)} />
           : (
             <div style={{maxWidth:760,margin:"0 auto",padding:"1.5rem 1rem",display:"flex",flexDirection:"column",gap:20}}>
               {messages.map((msg, i) => (
@@ -63,7 +63,7 @@ export function ChatWindow() {
         }
       </div>
 
-      <ChatInput onSend={t => sendMessage(t, currentMode)} disabled={isStreaming} mode={currentMode} />
+      <ChatInput onSend={(t, image, model) => sendMessage(t, image, model, currentMode)} disabled={isStreaming} mode={currentMode} />
     </div>
   )
 }
