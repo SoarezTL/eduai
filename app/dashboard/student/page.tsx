@@ -1,4 +1,6 @@
-import { Sidebar }    from "@/components/chat/Sidebar"
+"use client"
+
+import { Sidebar } from "@/components/chat/Sidebar"
 import { ChatWindow } from "@/components/chat/ChatWindow"
 
 export default function StudentDashboard() {
@@ -8,6 +10,6 @@ export default function StudentDashboard() {
       <main className="flex-1 overflow-hidden">
         <ChatWindow />
       </main>
-    </div> 
+    </div>
   )
 }
