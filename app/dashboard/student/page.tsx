@@ -8,6 +8,6 @@ export default function StudentDashboard() {
       <main className="flex-1 overflow-hidden">
         <ChatWindow />
       </main>
-    </div>
+    </div> 
   )
 }
