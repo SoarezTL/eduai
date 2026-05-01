@@ -5,19 +5,31 @@ export const runtime = "nodejs"
 export const maxDuration = 60
 
 export async function POST(req: NextRequest) {
-  const { messages, mode = "study", image, model } = await req.json()
+  const { messages, mode = "study", image, model, language = "en" } = await req.json()
   if (!messages || !Array.isArray(messages)) return new Response("Bad request", { status: 400 })
 
   const cfg = getModeConfig(mode)
   const selectedModel = model ?? "google/gemini-2.0-flash-001"
 
+  // Language injection
+  const langMap: Record<string, string> = {
+    en: "English",
+    tet: "Tetum",
+    pt: "Portuguese",
+    id: "Indonesian",
+    zh: "Chinese",
+  }
+  const langName = langMap[language] ?? "English"
+  const systemPrompt = language === "en"
+    ? cfg.systemPrompt
+    : `${cfg.systemPrompt}\n\nIMPORTANT: Always respond in ${langName}. Use ${langName} for all explanations, examples, and responses.`
+
   // Build the last user message with optional file/image
   const lastMessage = messages[messages.length - 1]
-
   let processedLastMessage = lastMessage
+
   if (image && lastMessage?.role === "user") {
     if (image.startsWith("data:image")) {
-      // It's an image — send as vision message
       processedLastMessage = {
         role: "user",
         content: [
@@ -26,7 +38,6 @@ export async function POST(req: NextRequest) {
         ],
       }
     } else {
-      // It's a PDF/text/doc — extract text from base64 and append to message
       try {
         const base64Data = image.split(",")[1]
         const fileText = Buffer.from(base64Data, "base64").toString("utf-8")
@@ -57,7 +68,7 @@ export async function POST(req: NextRequest) {
       model: selectedModel,
       stream: true,
       messages: [
-        { role: "system", content: cfg.systemPrompt },
+        { role: "system", content: systemPrompt },
         ...messagesWithFile,
       ],
     }),
