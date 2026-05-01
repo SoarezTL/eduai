@@ -1,13 +1,18 @@
 "use client"
-
 import { useCallback } from "react"
 import { useChatStore } from "@/lib/store"
-import type { Mode } from "@/lib/types"
+import type { Mode, Language } from "@/lib/types"
 
 export function useChat() {
   const store = useChatStore()
 
-  const sendMessage = useCallback(async (content: string, image?: string, model?: string, mode?: Mode) => {
+  const sendMessage = useCallback(async (
+    content: string,
+    image?: string,
+    model?: string,
+    mode?: Mode,
+    language?: Language
+  ) => {
     const targetMode = mode ?? store.currentMode
     let sessionId = store.activeSessionId
 
@@ -28,7 +33,7 @@ export function useChat() {
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages, mode: targetMode, image, model }),
+        body: JSON.stringify({ messages, mode: targetMode, image, model, language: language ?? "en" }),
       })
 
       if (!res.ok || !res.body) throw new Error("Stream failed")
