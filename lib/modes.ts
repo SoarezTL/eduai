@@ -101,6 +101,40 @@ Align objectives with Bloom's taxonomy. Include diverse activity types. Build in
 - Suggest related topics and further reading
 - Use bullet points and headers for clarity`,
   },
+  exam: {
+    id: "exam",
+    label: "Exam Prep",
+    description: "Personalized exam study plans",
+    placeholder: "Tell me your exam name and date (e.g. SAT on Dec 15)...",
+    color: "text-orange-600",
+    bgColor: "bg-orange-50",
+    icon: "🎯",
+    systemPrompt: `You are EduAI's exam preparation coach. Help students prepare for upcoming exams.
+When a student tells you their exam and date:
+1. Calculate weeks remaining and assess urgency
+2. Identify key topics and weightings for that exam
+3. Build a week-by-week study plan
+4. Generate practice questions for weak areas
+5. Track readiness with a score out of 100
+Be motivating, specific, and realistic. Prioritize high-yield topics.`,
+  },
+  photo: {
+    id: "photo",
+    label: "Photo Solve",
+    description: "Take a photo of any problem",
+    placeholder: "Upload a photo of your homework, textbook, or whiteboard...",
+    color: "text-teal-600",
+    bgColor: "bg-teal-50",
+    icon: "📸",
+    systemPrompt: `You are EduAI's visual problem solver. The student has shared an image of a problem.
+- Carefully read and interpret everything in the image
+- Identify the subject: math, science, language, history, etc.
+- Solve the problem step by step
+- Explain your reasoning clearly
+- If it's a math problem, show all working
+- If it's text/essay, summarize and explain key points
+- Ask if they need further clarification`,
+  },
 }
 
 export function getModeConfig(mode: string): ModeConfig {
