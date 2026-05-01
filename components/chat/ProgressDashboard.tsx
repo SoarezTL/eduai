@@ -10,6 +10,8 @@ const MODE_COLORS: Record<Mode, string> = {
   quiz: "#f59e0b",
   lesson: "#ec4899",
   research: "#06b6d4",
+  exam: "#f97316",
+  photo: "#14b8a6",
 }
 
 const MODE_ICONS: Record<Mode, string> = {
@@ -19,6 +21,8 @@ const MODE_ICONS: Record<Mode, string> = {
   quiz: "📝",
   lesson: "📖",
   research: "🔬",
+  exam: "🎯",
+  photo: "📸",
 }
 
 export function ProgressDashboard({ onClose }: { onClose: () => void }) {
