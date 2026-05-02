@@ -18,7 +18,7 @@ const LANGUAGES: { id: Language; label: string; flag: string }[] = [
   { id: "pt", label: "Português", flag: "🇵🇹" },
   { id: "id", label: "Indonesia", flag: "🇮🇩" },
   { id: "zh", label: "中文", flag: "🇨🇳" },
-  { id: "de", label: "Deutsch", flag: "🇩🇪" },
+  { id: "de", label: "Deutsch", flag: "🇩🇪" }, 
 ]
 
 export function ChatInput({
@@ -79,7 +79,7 @@ export function ChatInput({
   const isImageFile = (name: string) => name.match(/\.(jpg|jpeg|png|gif|webp)$/i)
   const getFileIcon = (name: string) => {
     if (name.endsWith(".pdf")) return "📄"
-    if (name.endsWith(".doc") || name.endsWith(".docx")) return "📝"
+    if (name.endsWith(".doc") || name.endsWith(".docx")) return "📝" 
     return "📎"
   }
 
