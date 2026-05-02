@@ -11,7 +11,7 @@ import { WelcomeScreen }     from "./WelcomeScreen"
 import { ThinkingIndicator } from "./ThinkingIndicator"
 
 export function ChatWindow() {
-  const { activeSession, currentMode, isStreaming, setMode, createSession, clearSession, sendMessage } = useChat()
+  const { activeSession, currentMode, currentLanguage, isStreaming, setMode, setLanguage, createSession, clearSession, sendMessage } = useChat()
 
   const bottomRef = useRef<HTMLDivElement>(null)
   const messages  = activeSession?.messages ?? []
