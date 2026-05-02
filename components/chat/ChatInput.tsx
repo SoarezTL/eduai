@@ -18,22 +18,26 @@ const LANGUAGES: { id: Language; label: string; flag: string }[] = [
   { id: "pt", label: "Português", flag: "🇵🇹" },
   { id: "id", label: "Indonesia", flag: "🇮🇩" },
   { id: "zh", label: "中文", flag: "🇨🇳" },
+  { id: "de", label: "Deutsch", flag: "🇩🇪" },
 ]
 
 export function ChatInput({
   onSend,
   disabled,
   mode,
+  language,
+  onLanguageChange,
 }: {
-  onSend: (msg: string, image?: string, model?: string, language?: Language) => void
+  onSend: (msg: string, image?: string, model?: string) => void
   disabled?: boolean
   mode: Mode
+  language: Language
+  onLanguageChange: (lang: Language) => void
 }) {
   const [value, setValue] = useState("")
   const [image, setImage] = useState<string | null>(null)
   const [imageName, setImageName] = useState<string>("")
   const [model, setModel] = useState(MODELS[0].id)
-  const [language, setLanguage] = useState<Language>("en")
   const [showModels, setShowModels] = useState(false)
   const [showLangs, setShowLangs] = useState(false)
   const ref = useRef<HTMLTextAreaElement>(null)
@@ -51,7 +55,7 @@ export function ChatInput({
   const handleSend = () => {
     const trimmed = value.trim()
     if ((!trimmed && !image) || disabled) return
-    onSend(trimmed || "Please solve this.", image ?? undefined, model, language)
+    onSend(trimmed || "Please solve this.", image ?? undefined, model)
     setValue("")
     setImage(null)
     setImageName("")
@@ -117,7 +121,6 @@ export function ChatInput({
 
         {/* Input box */}
         <div style={{ display: "flex", alignItems: "flex-end", gap: 8, background: "#f9f9f9", border: "1px solid #e5e7eb", borderRadius: 16, padding: "10px 14px" }}>
-          {/* Attach button */}
           <button onClick={() => fileRef.current?.click()}
             style={{ background: "none", border: "none", cursor: "pointer", color: "#9ca3af", padding: 4, flexShrink: 0, display: "flex", alignItems: "center" }}
             title="Attach file">
@@ -125,7 +128,6 @@ export function ChatInput({
           </button>
           <input ref={fileRef} type="file" accept="image/*,.pdf,.doc,.docx,.txt" onChange={handleFile} style={{ display: "none" }} />
 
-          {/* Camera button (photo mode) */}
           {mode === "photo" && (
             <>
               <button onClick={() => cameraRef.current?.click()}
@@ -171,7 +173,7 @@ export function ChatInput({
               {showLangs && (
                 <div style={{ position: "absolute", bottom: "100%", right: 0, marginBottom: 4, background: "white", border: "1px solid #e5e7eb", borderRadius: 10, boxShadow: "0 4px 12px rgba(0,0,0,0.1)", overflow: "hidden", zIndex: 100, minWidth: 150 }}>
                   {LANGUAGES.map(l => (
-                    <button key={l.id} onClick={() => { setLanguage(l.id); setShowLangs(false) }}
+                    <button key={l.id} onClick={() => { onLanguageChange(l.id); setShowLangs(false) }}
                       style={{ width: "100%", display: "flex", alignItems: "center", gap: 8, padding: "8px 12px", background: language === l.id ? "#fff1f2" : "white", border: "none", cursor: "pointer", fontSize: 12, color: language === l.id ? "#dc0000" : "#374151", textAlign: "left" }}>
                       <span>{l.flag}</span>
                       <span>{l.label}</span>
