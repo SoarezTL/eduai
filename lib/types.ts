@@ -2,7 +2,7 @@ export type Role = "student" | "educator"
 
 export type Mode = "study" | "math" | "code" | "quiz" | "lesson" | "research" | "exam" | "photo"
 
-export type Language = "en" | "tet" | "pt" | "id" | "zh"
+export type Language = "en" | "tet" | "pt" | "id" | "zh" | "de"
 
 export interface Message {
   id: string
