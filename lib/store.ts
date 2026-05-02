@@ -1,15 +1,17 @@
 import { create } from "zustand"
 import { persist } from "zustand/middleware"
-import type { Message, Mode, Session, ProgressState } from "@/lib/types"
+import type { Message, Mode, Session, ProgressState, Language } from "@/lib/types"
 import { generateId } from "@/lib/modes"
 
 interface ChatState {
   sessions: Session[]
   activeSessionId: string | null
   currentMode: Mode
+  currentLanguage: Language
   isStreaming: boolean
   progress: ProgressState
   setMode: (mode: Mode) => void
+  setLanguage: (lang: Language) => void
   createSession: (mode: Mode) => string
   setActiveSession: (id: string) => void
   getActiveSession: () => Session | null
@@ -28,10 +30,12 @@ export const useChatStore = create<ChatState>()(
       sessions: [],
       activeSessionId: null,
       currentMode: "study",
+      currentLanguage: "en",
       isStreaming: false,
       progress: { topics: [], quizScores: [] },
 
       setMode: (mode) => set({ currentMode: mode }),
+      setLanguage: (lang) => set({ currentLanguage: lang }),
 
       createSession: (mode) => {
         const id = generateId()
@@ -45,14 +49,11 @@ export const useChatStore = create<ChatState>()(
         set((s) => ({ sessions: [session, ...s.sessions], activeSessionId: id }))
         return id
       },
-
       setActiveSession: (id) => set({ activeSessionId: id }),
-
       getActiveSession: () => {
         const { sessions, activeSessionId } = get()
         return sessions.find((s) => s.id === activeSessionId) ?? null
       },
-
       addMessage: (sessionId, msgData) => {
         const msg: Message = { ...msgData, id: generateId(), createdAt: new Date() }
         set((s) => ({
@@ -68,7 +69,6 @@ export const useChatStore = create<ChatState>()(
         }))
         return msg
       },
-
       updateLastMessage: (sessionId, content) => {
         set((s) => ({
           sessions: s.sessions.map((sess) => {
@@ -80,20 +80,16 @@ export const useChatStore = create<ChatState>()(
           }),
         }))
       },
-
       setStreaming: (v) => set({ isStreaming: v }),
-
       clearSession: (sessionId) => set((s) => ({
         sessions: s.sessions.map((sess) =>
           sess.id === sessionId ? { ...sess, messages: [], updatedAt: new Date() } : sess
         ),
       })),
-
       deleteSession: (sessionId) => set((s) => ({
         sessions: s.sessions.filter((sess) => sess.id !== sessionId),
         activeSessionId: s.activeSessionId === sessionId ? null : s.activeSessionId,
       })),
-
       addTopic: (topic, mode) => set((s) => ({
         progress: {
           ...s.progress,
@@ -103,7 +99,6 @@ export const useChatStore = create<ChatState>()(
           ].slice(0, 50),
         }
       })),
-
       addQuizScore: (topic, score, total) => set((s) => ({
         progress: {
           ...s.progress,
@@ -119,6 +114,7 @@ export const useChatStore = create<ChatState>()(
       partialize: (s) => ({
         sessions: s.sessions.slice(0, 20),
         currentMode: s.currentMode,
+        currentLanguage: s.currentLanguage,
         progress: s.progress,
       }),
     }
