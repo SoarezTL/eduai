@@ -6,10 +6,10 @@ import { getModeConfig } from "@/lib/modes"
 import type { Mode, Language } from "@/lib/types"
 
 const MODELS = [
-  { id: "google/gemini-2.0-flash-001", label: "Gemini 2.0 Flash", icon: },
-  { id: "openai/gpt-4o-mini", label: "GPT-4o Mini", icon: },
-  { id: "anthropic/claude-3-haiku", label: "Claude 3 Haiku", icon: },
-  { id: "meta-llama/llama-3.1-8b-instruct:free", label: "Llama 3.1 8B", icon: },
+  { id: "google/gemini-2.0-flash-001", label: "Gemini 2.0 Flash" },
+  { id: "openai/gpt-4o-mini", label: "GPT-4o Mini" },
+  { id: "anthropic/claude-3-haiku", label: "Claude 3 Haiku" },
+  { id: "meta-llama/llama-3.1-8b-instruct:free", label: "Llama 3.1 8B" },
 ]
 
 const LANGUAGES: { id: Language; label: string; flag: string }[] = [
@@ -154,6 +154,7 @@ export function ChatInput({
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 6, gap: 8 }}>
           <p style={{ fontSize: 11, color: "#aaa", flexShrink: 0 }}>Enter to send · Shift+Enter for new line</p>
           <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+
             <div style={{ position: "relative" }}>
               <button onClick={() => { setShowLangs(!showLangs); setShowModels(false) }}
                 style={{ display: "flex", alignItems: "center", gap: 4, background: "none", border: "1px solid #e5e7eb", borderRadius: 8, padding: "4px 8px", fontSize: 11, color: "#374151", cursor: "pointer" }}>
@@ -174,10 +175,10 @@ export function ChatInput({
                 </div>
               )}
             </div>
+
             <div style={{ position: "relative" }}>
               <button onClick={() => { setShowModels(!showModels); setShowLangs(false) }}
                 style={{ display: "flex", alignItems: "center", gap: 4, background: "none", border: "1px solid #e5e7eb", borderRadius: 8, padding: "4px 8px", fontSize: 11, color: "#374151", cursor: "pointer" }}>
-                <span>{selectedModel.icon}</span>
                 <span>{selectedModel.label}</span>
                 <ChevronDown size={10} />
               </button>
@@ -186,7 +187,6 @@ export function ChatInput({
                   {MODELS.map(m => (
                     <button key={m.id} onClick={() => { setModel(m.id); setShowModels(false) }}
                       style={{ width: "100%", display: "flex", alignItems: "center", gap: 8, padding: "8px 12px", background: model === m.id ? "#fff1f2" : "white", border: "none", cursor: "pointer", fontSize: 12, color: model === m.id ? "#dc0000" : "#374151", textAlign: "left" }}>
-                      <span>{m.icon}</span>
                       <span>{m.label}</span>
                       {model === m.id && <span style={{ marginLeft: "auto", color: "#dc0000" }}>✓</span>}
                     </button>
@@ -194,6 +194,7 @@ export function ChatInput({
                 </div>
               )}
             </div>
+
           </div>
         </div>
       </div>
