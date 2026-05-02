@@ -6,10 +6,10 @@ import { getModeConfig } from "@/lib/modes"
 import type { Mode, Language } from "@/lib/types"
 
 const MODELS = [
-  { id: "google/gemini-2.0-flash-001", label: "Gemini 2.0 Flash", icon: "⚡" },
-  { id: "openai/gpt-4o-mini", label: "GPT-4o Mini", icon: "🤖" },
-  { id: "anthropic/claude-3-haiku", label: "Claude 3 Haiku", icon: "🧠" },
-  { id: "meta-llama/llama-3.1-8b-instruct:free", label: "Llama 3.1 8B", icon: "🦙" },
+  { id: "google/gemini-2.0-flash-001", label: "Gemini 2.0 Flash", icon: },
+  { id: "openai/gpt-4o-mini", label: "GPT-4o Mini", icon: },
+  { id: "anthropic/claude-3-haiku", label: "Claude 3 Haiku", icon: },
+  { id: "meta-llama/llama-3.1-8b-instruct:free", label: "Llama 3.1 8B", icon: },
 ]
 
 const LANGUAGES: { id: Language; label: string; flag: string }[] = [
@@ -18,7 +18,7 @@ const LANGUAGES: { id: Language; label: string; flag: string }[] = [
   { id: "pt", label: "Português", flag: "🇵🇹" },
   { id: "id", label: "Indonesia", flag: "🇮🇩" },
   { id: "zh", label: "中文", flag: "🇨🇳" },
-  { id: "de", label: "Deutsch", flag: "🇩🇪" }, 
+  { id: "de", label: "Deutsch", flag: "🇩🇪" },
 ]
 
 export function ChatInput({
@@ -79,7 +79,7 @@ export function ChatInput({
   const isImageFile = (name: string) => name.match(/\.(jpg|jpeg|png|gif|webp)$/i)
   const getFileIcon = (name: string) => {
     if (name.endsWith(".pdf")) return "📄"
-    if (name.endsWith(".doc") || name.endsWith(".docx")) return "📝" 
+    if (name.endsWith(".doc") || name.endsWith(".docx")) return "📝"
     return "📎"
   }
 
@@ -90,7 +90,6 @@ export function ChatInput({
     <div style={{ borderTop: "3px solid #ffc700", background: "white", padding: "12px 16px" }}>
       <div style={{ maxWidth: 760, margin: "0 auto" }}>
 
-        {/* File preview */}
         {image && (
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8, background: "#f9fafb", borderRadius: 10, padding: "8px 12px", border: "1px solid #e5e7eb" }}>
             {isImageFile(imageName) ? (
@@ -111,7 +110,6 @@ export function ChatInput({
           </div>
         )}
 
-        {/* Photo mode banner */}
         {mode === "photo" && !image && (
           <div style={{ marginBottom: 8, background: "#f0fdfa", border: "1px dashed #14b8a6", borderRadius: 10, padding: "10px 14px", display: "flex", alignItems: "center", gap: 10 }}>
             <span style={{ fontSize: 20 }}>📸</span>
@@ -119,11 +117,9 @@ export function ChatInput({
           </div>
         )}
 
-        {/* Input box */}
         <div style={{ display: "flex", alignItems: "flex-end", gap: 8, background: "#f9f9f9", border: "1px solid #e5e7eb", borderRadius: 16, padding: "10px 14px" }}>
           <button onClick={() => fileRef.current?.click()}
-            style={{ background: "none", border: "none", cursor: "pointer", color: "#9ca3af", padding: 4, flexShrink: 0, display: "flex", alignItems: "center" }}
-            title="Attach file">
+            style={{ background: "none", border: "none", cursor: "pointer", color: "#9ca3af", padding: 4, flexShrink: 0, display: "flex", alignItems: "center" }}>
             <Paperclip size={16} />
           </button>
           <input ref={fileRef} type="file" accept="image/*,.pdf,.doc,.docx,.txt" onChange={handleFile} style={{ display: "none" }} />
@@ -131,8 +127,7 @@ export function ChatInput({
           {mode === "photo" && (
             <>
               <button onClick={() => cameraRef.current?.click()}
-                style={{ background: "none", border: "none", cursor: "pointer", color: "#14b8a6", padding: 4, flexShrink: 0, display: "flex", alignItems: "center" }}
-                title="Take photo">
+                style={{ background: "none", border: "none", cursor: "pointer", color: "#14b8a6", padding: 4, flexShrink: 0, display: "flex", alignItems: "center" }}>
                 <Camera size={16} />
               </button>
               <input ref={cameraRef} type="file" accept="image/*" capture="environment" onChange={handleFile} style={{ display: "none" }} />
@@ -156,13 +151,9 @@ export function ChatInput({
           </button>
         </div>
 
-        {/* Bottom bar */}
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 6, gap: 8 }}>
           <p style={{ fontSize: 11, color: "#aaa", flexShrink: 0 }}>Enter to send · Shift+Enter for new line</p>
-
           <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-
-            {/* Language selector */}
             <div style={{ position: "relative" }}>
               <button onClick={() => { setShowLangs(!showLangs); setShowModels(false) }}
                 style={{ display: "flex", alignItems: "center", gap: 4, background: "none", border: "1px solid #e5e7eb", borderRadius: 8, padding: "4px 8px", fontSize: 11, color: "#374151", cursor: "pointer" }}>
@@ -183,8 +174,6 @@ export function ChatInput({
                 </div>
               )}
             </div>
-
-            {/* Model selector */}
             <div style={{ position: "relative" }}>
               <button onClick={() => { setShowModels(!showModels); setShowLangs(false) }}
                 style={{ display: "flex", alignItems: "center", gap: 4, background: "none", border: "1px solid #e5e7eb", borderRadius: 8, padding: "4px 8px", fontSize: 11, color: "#374151", cursor: "pointer" }}>
