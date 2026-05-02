@@ -18,7 +18,9 @@ export async function POST(req: NextRequest) {
     pt: "Portuguese",
     id: "Indonesian",
     zh: "Chinese",
+    de: "German",
   }
+
   const langName = langMap[language] ?? "English"
   const systemPrompt = language === "en"
     ? cfg.systemPrompt
