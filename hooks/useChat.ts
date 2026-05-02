@@ -14,6 +14,7 @@ export function useChat() {
     language?: Language
   ) => {
     const targetMode = mode ?? store.currentMode
+    const targetLanguage = language ?? store.currentLanguage
     let sessionId = store.activeSessionId
 
     if (!sessionId) {
@@ -33,7 +34,7 @@ export function useChat() {
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages, mode: targetMode, image, model, language: language ?? "en" }),
+        body: JSON.stringify({ messages, mode: targetMode, image, model, language: targetLanguage }),
       })
 
       if (!res.ok || !res.body) throw new Error("Stream failed")
@@ -71,8 +72,10 @@ export function useChat() {
     activeSession:    store.getActiveSession(),
     activeSessionId:  store.activeSessionId,
     currentMode:      store.currentMode,
+    currentLanguage:  store.currentLanguage,
     isStreaming:      store.isStreaming,
     setMode:          store.setMode,
+    setLanguage:      store.setLanguage,
     createSession:    store.createSession,
     setActiveSession: store.setActiveSession,
     clearSession:     store.clearSession,
