@@ -63,7 +63,7 @@ export function ChatWindow() {
         }
       </div>
 
-    <ChatInput onSend={(t, image, model, language) => sendMessage(t, image, model, currentMode, language)} disabled={isStreaming} mode={currentMode} />
+  <ChatInput onSend={(t, image, model) => sendMessage(t, image, model, currentMode, currentLanguage)} disabled={isStreaming} mode={currentMode} language={currentLanguage} onLanguageChange={setLanguage} />
     </div>
   )
 }
